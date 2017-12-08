@@ -36,7 +36,7 @@ export default {
       this.gitError = error;
     },
     listProjects() {
-      return window.fetch('https://git.int.avast.com/api/v4/projects' /*+ '?private_token=' + this.gitToken*/)
+      return window.fetch('https://git.int.avast.com/api/v4/projects' + '?private_token=' + this.gitToken)
         .then(resp => {
           if (!resp.ok) {
             return resp.json()
