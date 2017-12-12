@@ -2,6 +2,13 @@
 webpack/node_modules/
 webpack/dist/
 webpack/npm-debug.log
+webpack/temp
+AndroidApp/*.iml
+AndroidApp/.gradle
+AndroidApp/local.properties
+AndroidApp/.idea
+AndroidApp/build
+
 
 # Editor directories and files
 .idea
