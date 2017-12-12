@@ -25,6 +25,16 @@ export default {
       projects: []
     }
   },
+  mounted() {
+    var token = window.location.hash.match(/access_token=([^&]+)/);
+    if (token) {
+      this.gitError = '';
+      this.gitToken = token[1];
+      this.listProjects()
+        .then(list => this.projects = list);
+    }
+
+  },
   methods: {
     login(credentials) {
       this.gitError = '';

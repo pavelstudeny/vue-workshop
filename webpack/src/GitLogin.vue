@@ -2,7 +2,7 @@
     <div>
         <p>Please log in to git.int.avast.com</p>
         <p v-if="error" class="error">{{error}}</p>
-        <form @submit="login">
+        <form @submit="login" v-if="crossOrigin">
             <label for="username">User name</label><br />
             <input type="text" v-model="username" /><br />
 
@@ -11,6 +11,7 @@
 
             <button @click="login">Login</button><br />
         </form>
+        <button v-else @click="authorize">Authorize</button>
     </div>
 </template>
 
@@ -25,6 +26,9 @@ export default {
             username: '',
             password: ''
         }
+    },
+    computed: {
+        crossOrigin: function () { return typeof window === 'undefined' || !window.fetch; }
     },
     methods: {
         login(event) {
@@ -56,6 +60,13 @@ export default {
                 this.$emit('error', 'login exception ' + ex.toString());
             }
             event.preventDefault();
+        },
+        authorize() {
+            window.location = 'https://git.int.avast.com/oauth/authorize?' +
+                'client_id=1d87f4580c7de2c8e54b234f973f1afcca84b5e9daa96302e92c88eb63973b7c&' +
+                'redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&' +
+                'response_type=token&' +
+                'state=65feda';
         }
     }
 }
