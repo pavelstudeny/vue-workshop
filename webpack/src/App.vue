@@ -9,6 +9,7 @@
 <script>
 import GitLogin from './GitLogin.vue'
 import ProjectList from './ProjectList.vue'
+import fetch from './fetch.js';
 
 export default {
   name: 'app',
@@ -36,18 +37,18 @@ export default {
       this.gitError = error;
     },
     listProjects() {
-      return window.fetch('https://git.int.avast.com/api/v4/projects' + '?private_token=' + this.gitToken)
+      return fetch('https://git.int.avast.com/api/v4/projects' + '?access_token=' + this.gitToken)
         .then(resp => {
           if (!resp.ok) {
             return resp.json()
-              .then(err => Promise.reject(err.error));
+              .then(err => Promise.reject('api error ' + (err.error || err).toString()));
           }
           return resp.json();
         })
         .then(list => {
           return list.map(p => { return { name: p.path_with_namespace, id: p.id }; });
         })
-        .catch(err => { console.log(err); return []; });
+        .catch(err => { console.log(err); return [{name: 'unexpected error:', id: err.toString() }]; });
     }
   }
 }

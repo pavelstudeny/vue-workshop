@@ -9,12 +9,14 @@
             <label for="password">Password</label><br />
             <input type="password" v-model="password" /><br />
 
-            <input type="submit" value="Login" /><br />
+            <button @click="login">Login</button><br />
         </form>
     </div>
 </template>
 
 <script>
+import fetch from './fetch.js';
+
 export default {
     name: 'GitLogin',
     props: ['error'],
@@ -26,28 +28,33 @@ export default {
     },
     methods: {
         login(event) {
-            window.fetch('https://git.int.avast.com/api/v4/session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'login='+this.username+'&password='+this.password
-            })
-            .then(resp => {
-                if (resp.ok) {
-                    return resp.json();
-                }
-                else {
-                    return resp.json()
-                        .then(err => Promise.reject(err.error));
-                }
-            })
-            .then(loginData => {
-                 this.$emit('login', { token: loginData.private_token });
-            })
-            .catch(err => {
-                this.$emit('error', err);
-            });
+            try {
+                fetch('https://git.int.avast.com/oauth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'grant_type=password&username='+this.username+'&password='+this.password
+                })
+                .then(resp => {
+                    if (resp.ok) {
+                        return resp.json();
+                    }
+                    else {
+                        return resp.json()
+                            .then(err => Promise.reject('network error ' + (err.error || err).toString()));
+                    }
+                })
+                .then(loginData => {
+                    this.$emit('login', { token: loginData.access_token });
+                })
+                .catch(err => {
+                    this.$emit('error', 'login error ' + err.toString());
+                });
+            }
+            catch (ex) {
+                this.$emit('error', 'login exception ' + ex.toString());
+            }
             event.preventDefault();
         }
     }
