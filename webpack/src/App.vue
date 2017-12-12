@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import GitLogin from './GitLogin'
-import ProjectList from './ProjectList'
+import GitLogin from './GitLogin.vue'
+import ProjectList from './ProjectList.vue'
 
 export default {
   name: 'app',
